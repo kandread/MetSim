@@ -76,6 +76,8 @@ attrs = {'pet': {'units': 'mm timestep-1', 'long_name': 'potential evaporation',
                    'standard_name': 'daily_minimum_air_temperature'},
          'temp': {'units': 'C', 'long_name': 'air temperature',
                   'standard_name': 'air_temperature'},
+         'wind': {'units': 'm s-1', 'long_name': 'wind speed',
+                  'standard_name': 'wind speed'},
          'vapor_pressure': {'units': 'kPa', 'long_name': 'vapor pressure',
                             'standard_name': 'vapor_pressure'},
          'air_pressure': {'units': 'kPa', 'long_name': 'air pressure',
@@ -136,7 +138,7 @@ class MetSim(object):
         "lapse_rate": 0.0065,
         "iter_dims": ['lat', 'lon'],
         "out_vars": ['temp', 'prec', 'shortwave', 'longwave',
-                     'vapor_pressure', 'rel_humid']
+                     'vapor_pressure', 'rel_humid', 'air_pressure']
     }
 
     def __init__(self, params: dict):
@@ -482,6 +484,10 @@ class MetSim(object):
         # Make sure that we are going to write out some data
         if not len(self.params['out_vars']):
             errs.append("Output variable list must not be empty")
+
+        # Add output variables based on inputs
+        if 'wind' in self.met_data.variables:
+            self.params['out_vars'].append('wind')
 
         # Check output variables are valid
         daily_out_vars = ['t_min', 't_max', 'prec', 'swe', 'vapor_pressure',
